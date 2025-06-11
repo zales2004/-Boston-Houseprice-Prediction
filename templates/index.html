@@ -7,109 +7,128 @@
     <title>Boston Housing Price Prediction</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-        }
-
-        h2 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
             color: #333;
         }
 
-        form {
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
             background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 500px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
-        label {
+        h2 {
+            text-align: center;
+            color: #4b0082;
+            margin-bottom: 20px;
+        }
+
+        form label {
             display: block;
-            margin-top: 10px;
-            font-weight: bold;
+            margin-top: 12px;
+            font-weight: 600;
+            color: #444;
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 4px;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 6px;
             border: 1px solid #ccc;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 5px rgba(106, 17, 203, 0.4);
+            outline: none;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button, input[type="submit"] {
+            width: 48%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
         }
 
         input[type="submit"] {
-            margin-top: 15px;
-            padding: 10px 20px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
+            background: linear-gradient(45deg, #ff6ec4, #7873f5);
         }
 
         input[type="submit"]:hover {
-            background-color: #0056b3;
+            background: linear-gradient(45deg, #f83600, #f9d423);
+        }
+
+        button {
+            background: #999;
+        }
+
+        button:hover {
+            background: #555;
         }
 
         h3 {
-            margin-top: 20px;
-            color: #444;
+            text-align: center;
+            margin-top: 25px;
+            color: #222;
+            background-color: #e0e0e0;
+            padding: 12px;
+            border-radius: 6px;
         }
     </style>
+
+    <script>
+        function formatFormInputs() {
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => {
+                input.value = input.value.replace(',', '.');
+            });
+        }
+
+        function clearFormInputs() {
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => input.value = '');
+        }
+    </script>
 </head>
 
 <body>
+    <div class="container">
+        <h2>Boston Housing Price Prediction</h2>
 
-    <h2>Boston Housing Price Prediction</h2>
+        <form action="/predict" method="post" onsubmit="formatFormInputs()">
+            {% for field in ['CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'RM', 'AGE', 'DIS', 'RAD', 'TAX', 'PTRATIO', 'B', 'LSTAT'] %}
+                <label>{{ field }}:</label>
+                <input type="text" name="{{ field }}" value="{{ request.form.get(field, '') }}" required>
+            {% endfor %}
 
-    <form action="/predict" method="post">
-        <label>CRIM:</label>
-        <input type="text" name="CRIM">
+            <div class="button-group">
+                <input type="submit" value="Predict">
+                <button type="button" onclick="clearFormInputs()">Clear</button>
+            </div>
+        </form>
 
-        <label>ZN:</label>
-        <input type="text" name="ZN">
-
-        <label>INDUS:</label>
-        <input type="text" name="INDUS">
-
-        <label>CHAS (0 or 1):</label>
-        <input type="text" name="CHAS">
-
-        <label>NOX:</label>
-        <input type="text" name="NOX">
-
-        <label>RM:</label>
-        <input type="text" name="RM">
-
-        <label>AGE:</label>
-        <input type="text" name="AGE">
-
-        <label>DIS:</label>
-        <input type="text" name="DIS">
-
-        <label>RAD:</label>
-        <input type="text" name="RAD">
-
-        <label>TAX:</label>
-        <input type="text" name="TAX">
-
-        <label>PTRATIO:</label>
-        <input type="text" name="PTRATIO">
-
-        <label>B:</label>
-        <input type="text" name="B">
-
-        <label>LSTAT:</label>
-        <input type="text" name="LSTAT">
-
-        <input type="submit" value="Predict">
-    </form>
-
-    {% if prediction_text %}
-        <h3>{{ prediction_text }}</h3>
-    {% endif %}
-
+        {% if prediction_text %}
+            <h3>{{ prediction_text }}</h3>
+        {% endif %}
+    </div>
 </body>
 
 </html>
